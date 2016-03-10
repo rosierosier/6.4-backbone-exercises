@@ -5,26 +5,19 @@ var handlebars = require('handlebars');
 var $ = require('jquery');
 var Backbone = require('backbone');
 
-var Blog = require('./views/blog');
+var views = require('./views/blog');
 var models = require('./models/blog');
 
-console.log('hi');
+console.log('hi !');
 
-var blog = new models.BlogCollection();
-var blogView = new Blog({collection: blogs});
+$(function(){
+  var blog = new models.BlogCollection();
+  var blogView = new views.Blog({collection: blog});
 
-$('#submit-button').on('click', function(e){
-  e.preventDefault();
-  console.log('button-working');
-  var title = $('#title').val();
-  var blog = $('#blog').val();
-  var blogInfo = {'title': title, 'blog': blog};
-  console.log(blogInfo);
-  blog.input(blogInfo);
-  // console.log(blog);
-});
+  $('.blog-app').html(blogView.render().el);
+})
 
-},{"./models/blog":2,"./views/blog":3,"backbone":5,"handlebars":35,"jquery":47}],2:[function(require,module,exports){
+},{"./models/blog":2,"./views/blog":3,"backbone":6,"handlebars":36,"jquery":50}],2:[function(require,module,exports){
 "use strict";
 console.log('Hello Models A');
 var handlebars = require('handlebars');
@@ -37,11 +30,7 @@ var Blog = Backbone.Model.extend({
 
 var BlogCollection = Backbone.Collection.extend({
   model: Blog,
-  input: function(data){
-    this.add(data);
-    console.log(data);
-    return data;
-  }
+  url: "http://tiny-lasagna-server.herokuapp.com/collections/rosieaproject"
 });
 
 module.exports = {
@@ -49,7 +38,7 @@ module.exports = {
   'BlogCollection': BlogCollection
 }
 
-},{"backbone":5,"handlebars":35,"jquery":47}],3:[function(require,module,exports){
+},{"backbone":6,"handlebars":36,"jquery":50}],3:[function(require,module,exports){
 "use strict";
 console.log('Hello Views A');
 
@@ -60,25 +49,47 @@ var Backbone = require('backbone');
 var models = require('../models/blog');
 var _ = require('underscore');
 
+var formTemplate = require('../../templates/blog.hbs');
+
 var Blog = Backbone.View.extend({
-  // tagName: "form",
-  // template: handlebars.compile($('#address-book').html()),
-  // events: {
-  // },
+  tagName: "form",
+  template: formTemplate,
+  events: {
+    "submit": "complete"
+  },
   initialize: function(){
+    console.log('initialize function');
     this.listenTo(this.collection, "add", this.render);
   },
-  complete: function(){
+  complete: function(e){
+    e.preventDefault();
+    var title = $('#title').val();
+    var blog = $('#blog').val();
+    var blogInfo = {'title': title, 'blog': blog};
+    console.log(blogInfo);
+    console.log(this.collection);
+    this.collection.create(blogInfo)
   },
-
   render: function(contact){
     console.log('rendering');
-    this.$el.empty().append(this.template(contact.toJSON()));
+    this.$el.html(this.template());
     return this;
   }
 });
 
-},{"../models/blog":2,"backbone":5,"handlebars":35,"jquery":47,"underscore":50}],4:[function(require,module,exports){
+module.exports = {
+  'Blog': Blog,
+}
+
+},{"../../templates/blog.hbs":4,"../models/blog":2,"backbone":6,"handlebars":36,"jquery":50,"underscore":53}],4:[function(require,module,exports){
+"use strict";
+// hbsfy compiled Handlebars template
+var HandlebarsCompiler = require('hbsfy/runtime');
+module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    return "<label for=\"title\">Title</label> <input name=\"title\" id=\"title\" class=\"\" /><br/>\n<label for=\"blog\">Blog text</label> <input name=\"blog\" id=\"blog\" class=\"\" /><br/>\n<input type=\"submit\" value=\"submit\"/>\n";
+},"useData":true});
+
+},{"hbsfy/runtime":49}],5:[function(require,module,exports){
 (function (process,__filename){
 /** vim: et:ts=4:sw=4:sts=4
  * @license amdefine 1.0.0 Copyright (c) 2011-2015, The Dojo Foundation All Rights Reserved.
@@ -383,7 +394,7 @@ function amdefine(module, requireFn) {
 module.exports = amdefine;
 
 }).call(this,require('_process'),"/node_modules/amdefine/amdefine.js")
-},{"_process":49,"path":48}],5:[function(require,module,exports){
+},{"_process":52,"path":51}],6:[function(require,module,exports){
 (function (global){
 //     Backbone.js 1.2.3
 
@@ -2306,7 +2317,7 @@ module.exports = amdefine;
 });
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"jquery":47,"underscore":50}],6:[function(require,module,exports){
+},{"jquery":50,"underscore":53}],7:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -2373,7 +2384,7 @@ exports['default'] = inst;
 module.exports = exports['default'];
 
 
-},{"./handlebars.runtime":7,"./handlebars/compiler/ast":9,"./handlebars/compiler/base":10,"./handlebars/compiler/compiler":12,"./handlebars/compiler/javascript-compiler":14,"./handlebars/compiler/visitor":17,"./handlebars/no-conflict":31}],7:[function(require,module,exports){
+},{"./handlebars.runtime":8,"./handlebars/compiler/ast":10,"./handlebars/compiler/base":11,"./handlebars/compiler/compiler":13,"./handlebars/compiler/javascript-compiler":15,"./handlebars/compiler/visitor":18,"./handlebars/no-conflict":32}],8:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -2441,7 +2452,7 @@ exports['default'] = inst;
 module.exports = exports['default'];
 
 
-},{"./handlebars/base":8,"./handlebars/exception":21,"./handlebars/no-conflict":31,"./handlebars/runtime":32,"./handlebars/safe-string":33,"./handlebars/utils":34}],8:[function(require,module,exports){
+},{"./handlebars/base":9,"./handlebars/exception":22,"./handlebars/no-conflict":32,"./handlebars/runtime":33,"./handlebars/safe-string":34,"./handlebars/utils":35}],9:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -2547,7 +2558,7 @@ exports.createFrame = _utils.createFrame;
 exports.logger = _logger2['default'];
 
 
-},{"./decorators":19,"./exception":21,"./helpers":22,"./logger":30,"./utils":34}],9:[function(require,module,exports){
+},{"./decorators":20,"./exception":22,"./helpers":23,"./logger":31,"./utils":35}],10:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -2580,7 +2591,7 @@ exports['default'] = AST;
 module.exports = exports['default'];
 
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -2630,7 +2641,7 @@ function parse(input, options) {
 }
 
 
-},{"../utils":34,"./helpers":13,"./parser":15,"./whitespace-control":18}],11:[function(require,module,exports){
+},{"../utils":35,"./helpers":14,"./parser":16,"./whitespace-control":19}],12:[function(require,module,exports){
 /* global define */
 'use strict';
 
@@ -2798,7 +2809,7 @@ exports['default'] = CodeGen;
 module.exports = exports['default'];
 
 
-},{"../utils":34,"source-map":36}],12:[function(require,module,exports){
+},{"../utils":35,"source-map":37}],13:[function(require,module,exports){
 /* eslint-disable new-cap */
 
 'use strict';
@@ -3372,7 +3383,7 @@ function transformLiteralToPath(sexpr) {
 }
 
 
-},{"../exception":21,"../utils":34,"./ast":9}],13:[function(require,module,exports){
+},{"../exception":22,"../utils":35,"./ast":10}],14:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -3604,7 +3615,7 @@ function preparePartialBlock(open, program, close, locInfo) {
 }
 
 
-},{"../exception":21}],14:[function(require,module,exports){
+},{"../exception":22}],15:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -4732,7 +4743,7 @@ exports['default'] = JavaScriptCompiler;
 module.exports = exports['default'];
 
 
-},{"../base":8,"../exception":21,"../utils":34,"./code-gen":11}],15:[function(require,module,exports){
+},{"../base":9,"../exception":22,"../utils":35,"./code-gen":12}],16:[function(require,module,exports){
 /* istanbul ignore next */
 /* Jison generated parser */
 "use strict";
@@ -5472,7 +5483,7 @@ var handlebars = (function () {
 exports['default'] = handlebars;
 
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 /* eslint-disable new-cap */
 'use strict';
 
@@ -5660,7 +5671,7 @@ PrintVisitor.prototype.HashPair = function (pair) {
 /* eslint-enable new-cap */
 
 
-},{"./visitor":17}],17:[function(require,module,exports){
+},{"./visitor":18}],18:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -5802,7 +5813,7 @@ exports['default'] = Visitor;
 module.exports = exports['default'];
 
 
-},{"../exception":21}],18:[function(require,module,exports){
+},{"../exception":22}],19:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6025,7 +6036,7 @@ exports['default'] = WhitespaceControl;
 module.exports = exports['default'];
 
 
-},{"./visitor":17}],19:[function(require,module,exports){
+},{"./visitor":18}],20:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6043,7 +6054,7 @@ function registerDefaultDecorators(instance) {
 }
 
 
-},{"./decorators/inline":20}],20:[function(require,module,exports){
+},{"./decorators/inline":21}],21:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6074,7 +6085,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../utils":34}],21:[function(require,module,exports){
+},{"../utils":35}],22:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6116,7 +6127,7 @@ exports['default'] = Exception;
 module.exports = exports['default'];
 
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6164,7 +6175,7 @@ function registerDefaultHelpers(instance) {
 }
 
 
-},{"./helpers/block-helper-missing":23,"./helpers/each":24,"./helpers/helper-missing":25,"./helpers/if":26,"./helpers/log":27,"./helpers/lookup":28,"./helpers/with":29}],23:[function(require,module,exports){
+},{"./helpers/block-helper-missing":24,"./helpers/each":25,"./helpers/helper-missing":26,"./helpers/if":27,"./helpers/log":28,"./helpers/lookup":29,"./helpers/with":30}],24:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6205,7 +6216,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../utils":34}],24:[function(require,module,exports){
+},{"../utils":35}],25:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6301,7 +6312,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../exception":21,"../utils":34}],25:[function(require,module,exports){
+},{"../exception":22,"../utils":35}],26:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6328,7 +6339,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../exception":21}],26:[function(require,module,exports){
+},{"../exception":22}],27:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6359,7 +6370,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../utils":34}],27:[function(require,module,exports){
+},{"../utils":35}],28:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6387,7 +6398,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6401,7 +6412,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6436,7 +6447,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../utils":34}],30:[function(require,module,exports){
+},{"../utils":35}],31:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6485,7 +6496,7 @@ exports['default'] = logger;
 module.exports = exports['default'];
 
 
-},{"./utils":34}],31:[function(require,module,exports){
+},{"./utils":35}],32:[function(require,module,exports){
 (function (global){
 /* global window */
 'use strict';
@@ -6509,7 +6520,7 @@ module.exports = exports['default'];
 
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6803,7 +6814,7 @@ function executeDecorators(fn, prog, container, depths, data, blockParams) {
 }
 
 
-},{"./base":8,"./exception":21,"./utils":34}],33:[function(require,module,exports){
+},{"./base":9,"./exception":22,"./utils":35}],34:[function(require,module,exports){
 // Build out our basic SafeString type
 'use strict';
 
@@ -6820,7 +6831,7 @@ exports['default'] = SafeString;
 module.exports = exports['default'];
 
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6946,7 +6957,7 @@ function appendContextPath(contextPath, id) {
 }
 
 
-},{}],35:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 // USAGE:
 // var handlebars = require('handlebars');
 /* eslint-disable no-var */
@@ -6973,7 +6984,7 @@ if (typeof require !== 'undefined' && require.extensions) {
   require.extensions['.hbs'] = extension;
 }
 
-},{"../dist/cjs/handlebars":6,"../dist/cjs/handlebars/compiler/printer":16,"fs":51}],36:[function(require,module,exports){
+},{"../dist/cjs/handlebars":7,"../dist/cjs/handlebars/compiler/printer":17,"fs":54}],37:[function(require,module,exports){
 /*
  * Copyright 2009-2011 Mozilla Foundation and contributors
  * Licensed under the New BSD license. See LICENSE.txt or:
@@ -6983,7 +6994,7 @@ exports.SourceMapGenerator = require('./source-map/source-map-generator').Source
 exports.SourceMapConsumer = require('./source-map/source-map-consumer').SourceMapConsumer;
 exports.SourceNode = require('./source-map/source-node').SourceNode;
 
-},{"./source-map/source-map-consumer":43,"./source-map/source-map-generator":44,"./source-map/source-node":45}],37:[function(require,module,exports){
+},{"./source-map/source-map-consumer":44,"./source-map/source-map-generator":45,"./source-map/source-node":46}],38:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -7092,7 +7103,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"./util":46,"amdefine":4}],38:[function(require,module,exports){
+},{"./util":47,"amdefine":5}],39:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -7240,7 +7251,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"./base64":39,"amdefine":4}],39:[function(require,module,exports){
+},{"./base64":40,"amdefine":5}],40:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -7315,7 +7326,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"amdefine":4}],40:[function(require,module,exports){
+},{"amdefine":5}],41:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -7434,7 +7445,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"amdefine":4}],41:[function(require,module,exports){
+},{"amdefine":5}],42:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2014 Mozilla Foundation and contributors
@@ -7522,7 +7533,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"./util":46,"amdefine":4}],42:[function(require,module,exports){
+},{"./util":47,"amdefine":5}],43:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -7644,7 +7655,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"amdefine":4}],43:[function(require,module,exports){
+},{"amdefine":5}],44:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -8723,7 +8734,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"./array-set":37,"./base64-vlq":38,"./binary-search":40,"./quick-sort":42,"./util":46,"amdefine":4}],44:[function(require,module,exports){
+},{"./array-set":38,"./base64-vlq":39,"./binary-search":41,"./quick-sort":43,"./util":47,"amdefine":5}],45:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -9124,7 +9135,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"./array-set":37,"./base64-vlq":38,"./mapping-list":41,"./util":46,"amdefine":4}],45:[function(require,module,exports){
+},{"./array-set":38,"./base64-vlq":39,"./mapping-list":42,"./util":47,"amdefine":5}],46:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -9540,7 +9551,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"./source-map-generator":44,"./util":46,"amdefine":4}],46:[function(require,module,exports){
+},{"./source-map-generator":45,"./util":47,"amdefine":5}],47:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -9912,7 +9923,15 @@ define(function (require, exports, module) {
 
 });
 
-},{"amdefine":4}],47:[function(require,module,exports){
+},{"amdefine":5}],48:[function(require,module,exports){
+// Create a simple path alias to allow browserify to resolve
+// the runtime on a supported path.
+module.exports = require('./dist/cjs/handlebars.runtime')['default'];
+
+},{"./dist/cjs/handlebars.runtime":8}],49:[function(require,module,exports){
+module.exports = require("handlebars/runtime")["default"];
+
+},{"handlebars/runtime":48}],50:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.2.1
  * http://jquery.com/
@@ -19745,7 +19764,7 @@ if ( !noGlobal ) {
 return jQuery;
 }));
 
-},{}],48:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -19973,7 +19992,7 @@ var substr = 'ab'.substr(-1) === 'b'
 ;
 
 }).call(this,require('_process'))
-},{"_process":49}],49:[function(require,module,exports){
+},{"_process":52}],52:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -20066,7 +20085,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],50:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 //     Underscore.js 1.8.3
 //     http://underscorejs.org
 //     (c) 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -21616,6 +21635,6 @@ process.umask = function() { return 0; };
   }
 }.call(this));
 
-},{}],51:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 
 },{}]},{},[1]);

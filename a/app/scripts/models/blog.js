@@ -9,11 +9,7 @@ var Blog = Backbone.Model.extend({
 
 var BlogCollection = Backbone.Collection.extend({
   model: Blog,
-  input: function(data){
-    this.add(data);
-    console.log(data);
-    return data;
-  }
+  url: "http://tiny-lasagna-server.herokuapp.com/collections/rosieaproject"
 });
 
 module.exports = {
