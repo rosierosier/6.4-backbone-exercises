@@ -4,7 +4,7 @@ var handlebars = require('handlebars');
 var $ = require('jquery');
 var handlebars = require('handlebars');
 var Backbone = require('backbone');
-var models = require('../models/blog');
+var models = require('../models/person');
 var _ = require('underscore');
 
 var formTemplate = require('../../templates/person.hbs');
@@ -16,7 +16,7 @@ var PersonView = Backbone.View.extend({
     "submit": "complete"
   },
   initialize: function(){
-    console.log('initialize function');
+    // console.log('initialize function');
     this.listenTo(this.collection, "add", this.render);
   },
   complete: function(e){
@@ -26,12 +26,12 @@ var PersonView = Backbone.View.extend({
     var address = $('#address').val();
     var phone = $('#phone').val();
     var personInfo = {'firstName': firstName, 'lastName': lastName, 'address': address, 'phone': phone};
-    console.log(personInfo);
-    console.log(this.collection);
+    // console.log(personInfo);
+    // console.log(this.collection);
     this.collection.create(personInfo)
   },
   render: function(contact){
-    console.log('rendering');
+    // console.log('rendering');
     this.$el.html(this.template());
     return this;
   }
